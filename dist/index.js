@@ -59009,7 +59009,7 @@ const generateFeedMarkdown = (template, entry, dateFormat) => {
   if (dateFormat) {
     date = format(new Date(date), dateFormat);
   }
-  
+
   // Extract and clean up content for Markdown conversion and description
   const content =
     entry.description?.[0] ||
@@ -59040,6 +59040,7 @@ const generateFeedMarkdown = (template, entry, dateFormat) => {
   const image =
     entry['media:group']?.[0]?.['media:thumbnail']?.[0]?.$.url ||
     entry['media:thumbnail']?.[0]?.$.url ||
+    entry['media:content']?.[0]?.$.url ||
     '';
   const images =
     (entry['enclosure'] || entry['media:content'])
