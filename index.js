@@ -9,6 +9,7 @@ async function run() {
     const feedUrlsFile = core.getInput('feed_urls_file');
     const templateFile = core.getInput('template_file');
     const outputDir = core.getInput('output_dir');
+    const dateFormat = core.getInput('date_format');
 
     // Validate input values
     if (!fs.existsSync(templateFile)) {
@@ -31,7 +32,7 @@ async function run() {
       return;
     }
 
-    await processFeeds(feedUrls, template, outputDir);
+    await processFeeds(feedUrls, template, outputDir, dateFormat);
   } catch (error) {
     core.setFailed(error.message);
   }
