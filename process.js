@@ -6,6 +6,7 @@ const axios = require('axios');
 const { parseStringPromise } = require('xml2js');
 const sanitize = require('sanitize-filename');
 const TurndownService = require('turndown');
+const {format} = require('date-fns');
 
 
 const imageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
@@ -43,7 +44,7 @@ function parseFeedUrls(feedUrl, feedUrlsFile) {
   return feedUrls;
 }
 
-async function processFeeds(feedUrls, template, outputDir) {
+async function processFeeds(feedUrls, template, outputDir, dateFormat) {
   for (const url of feedUrls) {
     try {
       // Fetch and parse the RSS feed
@@ -65,7 +66,7 @@ async function processFeeds(feedUrls, template, outputDir) {
       // Process the feed entries and generate Markdown files
       entries.forEach((entry) => {
         try {
-          const { output, date, title } = generateFeedMarkdown(template, entry);
+          const { output, date, title } = generateFeedMarkdown(template, entry, dateFormat);
           const filePath = saveMarkdown(outputDir, date, title, output);
 
           console.log(`Markdown file '${filePath}' created.`);
@@ -107,7 +108,7 @@ function detectFeedType(feedData) {
 }
 
 // Main function for generating Markdown 
-const generateFeedMarkdown = (template, entry) => {
+const generateFeedMarkdown = (template, entry, dateFormat) => {
   
   const id =
     entry['yt:videoId']?.[0] ||
@@ -115,11 +116,15 @@ const generateFeedMarkdown = (template, entry) => {
     entry.guid?.[0]?.['_'] ||
     entry.guid?.[0] ||
     '';
-  const date = entry.published?.[0] || entry.pubDate?.[0] || entry.updated?.[0] || '';
+  let date = entry.published?.[0] || entry.pubDate?.[0] || entry.updated?.[0] || '';
   const link = entry.link?.[0]?.$?.href || entry.link?.[0] || '';
   const titleRaw = typeof entry.title?.[0] === 'string' ? entry.title[0] : entry.title?.[0]?._ || '';
   const title = titleRaw.replace(/[^\w\s-]/g, '') || '';
 
+  if (dateFormat) {
+    date = format(new Date(date), dateFormat);
+  }
+  
   // Extract and clean up content for Markdown conversion and description
   const content =
     entry.description?.[0] ||

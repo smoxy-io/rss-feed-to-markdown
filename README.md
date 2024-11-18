@@ -8,6 +8,7 @@ This GitHub Action converts RSS / Atom feed entries to Markdown files. It fetche
 - `feed_urls_file` (optional): Path to a JSON file containing an array of feed URLs or a plain text file with one URL per line.
 - `template_file` (required): The path to the template file.
 - `output_dir` (required): The directory where the generated Markdown files will be saved.
+- `date_format` (optional): The format to use for publish dates (see date-fns for syntax). Defaults to the output of javascript's `Date.toString()`
 
 > Note: You must provide either `feed_url` or `feed_urls_file`, but not both.
 
